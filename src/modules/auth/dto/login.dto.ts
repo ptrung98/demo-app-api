@@ -13,3 +13,13 @@ export class LoginDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class LoginByTokenDto {
+  @IsString()
+  @IsNotEmpty()
+  accessToken: string;
+
+  @IsString()
+  @IsNotEmpty()
+  refreshToken: string;
+}
