@@ -1,7 +1,36 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-async function main() {
+async function clearDatabase() {
+  console.log('🧹 Clearing all tables...');
+
+  // Tắt kiểm tra khóa ngoại để tránh lỗi quan hệ
+  await prisma.$executeRawUnsafe(`SET session_replication_role = 'replica';`);
+
+  // Xóa dữ liệu trong tất cả các bảng
+  const tablenames = await prisma.$queryRaw<
+    { tablename: string }[]
+  >`SELECT tablename FROM pg_tables WHERE schemaname='public';`;
+
+  for (const { tablename } of tablenames) {
+    // Bỏ qua bảng `_prisma_migrations` (để tránh lỗi Prisma)
+    if (tablename !== '_prisma_migrations') {
+      await prisma.$executeRawUnsafe(
+        `TRUNCATE TABLE "${tablename}" RESTART IDENTITY CASCADE;`,
+      );
+      console.log(`✅ Cleared table: ${tablename}`);
+    }
+  }
+
+  // Bật lại kiểm tra khóa ngoại
+  await prisma.$executeRawUnsafe(`SET session_replication_role = 'origin';`);
+
+  console.log('✅ Database cleared successfully!');
+}
+
+async function SeedData() {
+  console.log('🌱 Seeding new data...');
+
   await prisma.store.createMany({
     data: [
       {
@@ -56,6 +85,12 @@ async function main() {
       },
     ],
   });
+  console.log('✅ Seeded new stores successfully!');
+}
+
+async function main() {
+  await clearDatabase();
+  await SeedData();
 }
 
 main()

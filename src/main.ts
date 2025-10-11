@@ -2,15 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,       // loại bỏ field thừa
+      whitelist: true, // loại bỏ field thừa
       forbidNonWhitelisted: true, // báo lỗi nếu có field không khai báo trong DTO
-      transform: true,       // tự động chuyển kiểu dữ liệu (string -> number, ...)
+      transform: true, // tự động chuyển kiểu dữ liệu (string -> number, ...)
     }),
   );
 
@@ -23,6 +24,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
+
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
