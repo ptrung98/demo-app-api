@@ -34,6 +34,7 @@ async function SeedData() {
   await prisma.store.createMany({
     data: [
       {
+        image: '',
         name: 'Cửa hàng A',
         address: '123 Nguyễn Trãi, Thanh Xuân, Hà Nội',
         description: 'Chuyên bán đồ điện tử',
@@ -44,6 +45,7 @@ async function SeedData() {
         status: true,
       },
       {
+        image: '',
         name: 'Cửa hàng B',
         address: '45 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội',
         description: 'Cửa hàng quần áo thời trang cao cấp',
@@ -54,6 +56,7 @@ async function SeedData() {
         status: true,
       },
       {
+        image: '',
         name: 'Cửa hàng C',
         address: '67 Nguyễn Huệ, Ba Đình, Hà Nội',
         description: 'Cửa hàng sách và văn phòng phẩm',
@@ -64,6 +67,7 @@ async function SeedData() {
         status: false,
       },
       {
+        image: '',
         name: 'Cửa hàng D',
         address: '89 Trần Duy Hưng, Cầu Giấy, Hà Nội',
         description: 'Đại lý thiết bị y tế và dụng cụ chăm sóc sức khỏe',
@@ -74,6 +78,7 @@ async function SeedData() {
         status: true,
       },
       {
+        image: '',
         name: 'Cửa hàng E',
         address: '32 Cầu Giấy, Đống Đa, Hà Nội',
         description: 'Cửa hàng nội thất gia đình và văn phòng',
@@ -89,7 +94,7 @@ async function SeedData() {
 }
 
 async function main() {
-  await clearDatabase();
+  // await clearDatabase();
   await SeedData();
 }
 
