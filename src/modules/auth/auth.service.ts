@@ -57,12 +57,7 @@ export class AuthService {
 
   async loginByToken(tokenDto: LoginByTokenDto) {
     try {
-      const payload: any = this.jwtService.verify(tokenDto.accessToken, {
-        secret: process.env.REFRESH_TOKEN_SECRET,
-      });
-
-      //verify access token
-      const isValid = await this.jwtService.verify(tokenDto.accessToken, {
+      const isValid = this.jwtService.verify(tokenDto.accessToken, {
         secret: process.env.ACCESS_TOKEN_SECRET,
       });
 
@@ -87,9 +82,9 @@ export class AuthService {
 
       const refreshToken = await this.jwtService.signAsync(
         { sub: user.id },
-        { 
+        {
           secret: process.env.REFRESH_TOKEN_SECRET,
-          expiresIn: process.env.REFRESH_TOKEN_EXPIRATION || '7d' 
+          expiresIn: process.env.REFRESH_TOKEN_EXPIRATION || '7d',
         },
       );
 

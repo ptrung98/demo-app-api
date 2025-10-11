@@ -17,6 +17,7 @@ export class LoginDto {
 export class LoginByTokenDto {
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   accessToken: string;
 
   @IsString()

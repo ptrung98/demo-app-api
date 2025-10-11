@@ -18,6 +18,7 @@ model User {
   updatedAt   DateTime @updatedAt
 
   refreshTokens RefreshToken[]
+  Order         Order[]
 }
 
 model RefreshToken {
@@ -30,7 +31,50 @@ model RefreshToken {
   createdAt DateTime @default(now())
 }
 
+model Store {
+  id          String   @id @default(uuid())
+  name        String
+  address     String?
+  description String?
+  latitude    Float?
+  longitude   Float?
+  total       Int      @default(0)
+  rented      Int      @default(0)
+  status      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  userId    String
+  startTime DateTime
+  endTime   DateTime?
+  fee       Float
+  status    String   @default("RENTED")
+  issue     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Policy {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum Role {
   USER
   ADMIN
+}
+
+enum OrderStatus {
+  RENTED
+  RETURNED
+  COMPLETED
+  OVERDUE
 }
