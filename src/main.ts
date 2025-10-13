@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { BigIntInterceptor } from './common/interceptors/bigInt.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +27,7 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs', app, document);
 
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalInterceptors(new BigIntInterceptor());
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }

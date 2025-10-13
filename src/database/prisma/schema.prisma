@@ -49,8 +49,8 @@ model Store {
 model Order {
   id        String   @id @default(uuid())
   userId    String
-  startTime DateTime
-  endTime   DateTime?
+  startTime BigInt
+  endTime   BigInt?
   fee       Float
   status    String   @default("RENTED")
   issue     String?
@@ -64,6 +64,7 @@ model Policy {
   id        String   @id @default(uuid())
   title     String
   content   String
+  fee       Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

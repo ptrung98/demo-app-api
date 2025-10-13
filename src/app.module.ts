@@ -7,6 +7,10 @@ import { join } from 'path';
 import { StoreService } from './modules/store/store.service';
 import { StoreController } from './modules/store/store.controller';
 import { PrismaService } from './database/prisma/prisma.service';
+import { OrderController } from './modules/order/order.controller';
+import { OrderService } from './modules/order/order.service';
+import { PolicyController } from './modules/policy/policy.controller';
+import { PolicyService } from './modules/policy/policy.service';
 
 @Module({
   imports: [
@@ -16,7 +20,7 @@ import { PrismaService } from './database/prisma/prisma.service';
       serveRoot: '/assets',
     }),
   ],
-  controllers: [AppController, StoreController],
-  providers: [AppService, StoreService, PrismaService],
+  controllers: [AppController, StoreController, OrderController, PolicyController],
+  providers: [AppService, StoreService, PrismaService, OrderService, PolicyService],
 })
-export class AppModule {}
+export class AppModule { }
