@@ -8,6 +8,7 @@ import { LoginByTokenDto, LoginDto } from './dto/login.dto';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -56,25 +57,56 @@ export class AuthService {
   }
 
   async loginByToken(tokenDto: LoginByTokenDto) {
+    const verifySafe = () => {
+      try {
+        return this.jwtService.verify(tokenDto.accessToken, {
+          secret: process.env.ACCESS_TOKEN_SECRET,
+        });
+      } catch {
+        return null;
+      }
+    };
+
     try {
-      const payload: any = this.jwtService.verify(tokenDto.accessToken, {
-        secret: process.env.REFRESH_TOKEN_SECRET,
-      });
+      const isValid = verifySafe();
 
-      //verify access token
-      const isValid = await this.jwtService.verify(tokenDto.accessToken, {
-        secret: process.env.ACCESS_TOKEN_SECRET,
-      });
+      if (isValid) {
+        const tokenDecode = this.jwtService.decode(tokenDto.accessToken);
+        const user = await this.prisma.user.findUnique({
+          where: { id: tokenDecode.sub },
+        });
 
-      if (!isValid) throw new UnauthorizedException('Token không hợp lệ');
+        if (!user) throw new BadRequestException('User not exist');
+
+        const accessToken = await this.jwtService.signAsync(
+          {
+            sub: tokenDecode.sub,
+            phoneNumber: tokenDecode.phoneNumber,
+            role: tokenDecode.role,
+          },
+          {
+            secret: process.env.ACCESS_TOKEN_SECRET,
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRATION || '15m',
+          },
+        );
+
+        return {
+          user: {
+            id: user.id,
+            phoneNumber: user.phoneNumber,
+            role: user.role,
+          },
+          accessToken,
+          refreshToken: tokenDto.refreshToken,
+        };
+      }
 
       const savedToken = await this.prisma.refreshToken.findUnique({
         where: { token: tokenDto.refreshToken },
         include: { user: true },
       });
 
-      if (!savedToken) throw new UnauthorizedException('Token không hợp lệ');
-
+      if (!savedToken) throw new UnauthorizedException('Token invalid');
       const user = savedToken.user;
 
       const accessToken = await this.jwtService.signAsync(
@@ -87,9 +119,9 @@ export class AuthService {
 
       const refreshToken = await this.jwtService.signAsync(
         { sub: user.id },
-        { 
+        {
           secret: process.env.REFRESH_TOKEN_SECRET,
-          expiresIn: process.env.REFRESH_TOKEN_EXPIRATION || '7d' 
+          expiresIn: process.env.REFRESH_TOKEN_EXPIRATION || '7d',
         },
       );
 
@@ -107,7 +139,7 @@ export class AuthService {
         user: { id: user.id, phoneNumber: user.phoneNumber, role: user.role },
       };
     } catch (error) {
-      throw new UnauthorizedException('Token không hợp lệ');
+      throw new UnauthorizedException('Token invalid');
     }
   }
 
@@ -116,7 +148,7 @@ export class AuthService {
       where: { phoneNumber: registerDto.phoneNumber },
     });
     if (existingUser) {
-      throw new BadRequestException('Số điện thoại đã được đăng ký');
+      throw new BadRequestException('Phone number is registered');
     }
 
     // 2️⃣ Hash mật khẩu
