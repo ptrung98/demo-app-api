@@ -48,6 +48,7 @@ model Store {
 
 model Order {
   id        String   @id @default(uuid())
+  uid       String
   userId    String
   startTime BigInt
   endTime   BigInt?
