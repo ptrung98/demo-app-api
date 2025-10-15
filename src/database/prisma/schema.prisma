@@ -52,6 +52,8 @@ model Order {
   userId    String
   startTime BigInt
   endTime   BigInt?
+  sNCSCode  String
+  idPin     String
   fee       Float
   status    String   @default("RENTED")
   issue     String?
