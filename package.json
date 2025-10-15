@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build && cp -r src/assets dist/src/assets && yarn prisma:generate",
+    "build": "yarn prisma:generate && nest build && cp -r src/assets dist/assets",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",
@@ -24,7 +24,8 @@
     "prisma:seed": "npx prisma db seed"
   },
   "prisma": {
-    "seed": "ts-node src/database/prisma/seed.ts"
+    "seed": "ts-node src/database/prisma/seed.ts",
+    "schema": "./src/database/prisma/schema.prisma"
   },
   "dependencies": {
     "@as-integrations/express5": "^1.1.2",
