@@ -11,6 +11,7 @@ import { OrderController } from './modules/order/order.controller';
 import { OrderService } from './modules/order/order.service';
 import { PolicyController } from './modules/policy/policy.controller';
 import { PolicyService } from './modules/policy/policy.service';
+import { TimeController } from './modules/time/time.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { PolicyService } from './modules/policy/policy.service';
       serveRoot: '/assets',
     }),
   ],
-  controllers: [AppController, StoreController, OrderController, PolicyController],
+  controllers: [AppController, StoreController, OrderController, PolicyController, TimeController],
   providers: [AppService, StoreService, PrismaService, OrderService, PolicyService],
 })
 export class AppModule { }

@@ -19,6 +19,7 @@ export class OrderService extends BaseService<Order> {
     };
 
     const policy = await this.prisma.policy.findFirst();
+    dto.startTime = BigInt(new Date().getTime());
     dto.fee = policy?.fee || 0;
     dto.uid = generateOrderCode();
     return super.create(dto);
@@ -28,7 +29,8 @@ export class OrderService extends BaseService<Order> {
     const data = await this.prisma.order.update({
       where: { id: orderId },
       data: {
-        status: OrderStatus.RETURNED
+        status: OrderStatus.RETURNED,
+        endTime: new Date().getTime()
       }
     })
 
